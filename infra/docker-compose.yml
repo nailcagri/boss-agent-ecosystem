@@ -1,11 +1,12 @@
 version: "3.9"
+
 services:
   redis:
-    image: redis:7
+    image: "redis:7"
     restart: unless-stopped
 
   postgres:
-    image: postgres:16
+    image: "postgres:16"
     restart: unless-stopped
     environment:
       POSTGRES_USER: boss
@@ -17,6 +18,27 @@ services:
       - ./infra/postgres-data:/var/lib/postgresql/data
       - ./infra/init-postgres.sql:/docker-entrypoint-initdb.d/init.sql
 
-# TODO: add services for:
-# - boss-agent (LangGraph)
-# - browser-worker (Playwright)
+  boss-agent:
+    image: "python:3.11-slim"
+    restart: unless-stopped
+    env_file: ../.env
+    working_dir: /app
+    volumes:
+      - ../:/app
+    depends_on:
+      - redis
+      - postgres
+    command: bash -lc 'pip install --no-cache-dir -r requirements.txt && python -m boss_agent.main'
+
+  browser-worker:
+    # TODO: replace image with your preferred Playwright base image
+    image: "mcr.microsoft.com/playwright/python:latest"
+    restart: unless-stopped
+    env_file: ../.env
+    working_dir: /app
+    volumes:
+      - ../:/app
+    depends_on:
+      - redis
+      - postgres
+    command: bash -lc 'echo "browser worker placeholder"; tail -f /dev/null'
