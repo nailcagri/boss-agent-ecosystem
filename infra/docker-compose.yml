@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  redis:
+    image: redis:7
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: boss
+      POSTGRES_PASSWORD: CHANGE_ME
+      POSTGRES_DB: boss
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./infra/postgres-data:/var/lib/postgresql/data
+      - ./infra/init-postgres.sql:/docker-entrypoint-initdb.d/init.sql
+
+# TODO: add services for:
+# - boss-agent (LangGraph)
+# - browser-worker (Playwright)
