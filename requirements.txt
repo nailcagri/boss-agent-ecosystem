@@ -1,0 +1,15 @@
+# core orchestrator + agents
+langchain
+langgraph
+openai
+pydantic
+redis
+psycopg[binary]
+python-dotenv
+
+# optional UI/control panel
+fastapi
+uvicorn[standard]
+
+# browser worker
+playwright
